@@ -12,14 +12,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dartsscore.services.dataService
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dartsscore.viewmodel.PlayersViewModel
 
 
 data class ButtonsObject(
@@ -30,8 +30,10 @@ data class ButtonsObject(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreen(onNavigate: (String) -> Unit = {}) {
-    val ds = remember { dataService() }
+fun HomeScreen(
+    onNavigate: (String) -> Unit = {},
+    viewModel: PlayersViewModel = viewModel()
+) {
     val buttons = listOf(
         ButtonsObject(301, 0xFF0E2744.toInt(), 0xFF0090FF.toInt()),
         ButtonsObject(501, 0xFF2E1C0B.toInt(), 0xFFFF801F.toInt()),
@@ -48,7 +50,7 @@ fun HomeScreen(onNavigate: (String) -> Unit = {}) {
             Button(
                 onClick = {
                     onNavigate("player")
-                    ds.gameMode = button.value
+                    viewModel.gameMode = button.value
                 },
                 modifier = Modifier
                     .fillMaxWidth()
