@@ -8,15 +8,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,17 +39,15 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dartsscore.R
-import com.example.dartsscore.ui.theme.DartsScoreTheme
 import com.example.dartsscore.viewmodel.PlayersViewModel
 
 @Composable
 fun Players(
-    viewModel: PlayersViewModel = viewModel()
+    onNavigate: (String) -> Unit = {},
+    viewModel: PlayersViewModel
 ) {
     val playerName = rememberTextFieldState(initialText = "")
     Box(
@@ -115,7 +118,7 @@ fun Players(
 
             }
             LazyColumn {
-                items(viewModel.playerNames) { name ->
+                items(viewModel.players) { player ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -127,7 +130,7 @@ fun Players(
                             .padding(5.dp), verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "✓ $name",
+                            text = "✓ ${player.name}",
                             modifier = Modifier.padding(8.dp),
                             fontSize = 28.sp,
                             fontWeight = Bold,
@@ -135,7 +138,7 @@ fun Players(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
-                            onClick = { viewModel.deletePlayer(name) }
+                            onClick = { viewModel.deletePlayer(player) }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
@@ -150,17 +153,32 @@ fun Players(
 
                 }
             }
+            if (viewModel.players.isNotEmpty()) {
+                Button(
+                    onClick = {
+                        onNavigate("game")
+                    },
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .height(60.dp)
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = "Play game",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                    Text("Play game", fontWeight = Bold, fontSize = 24.sp)
+                }
+            }
         }
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun PlayersPreview() {
-    DartsScoreTheme(
-        darkTheme = true,
-    ) {
-        Players()
-    }
-}
